@@ -5,7 +5,7 @@ mapboxgl.accessToken = 'pk.eyJ1IjoibGludXNsZWUiLCJhIjoiY203anFzdXZ0MDcwMTJpb2kyc
 
 let departuresByMinute = Array.from({ length: 1440 }, () => []);
 let arrivalsByMinute = Array.from({ length: 1440 }, () => []);
-let stationFlow = d3.scaleQuantize().domain([0, 1]).range([0, 0.5, 1]); /// didnt get here in the instructions yet
+let stationFlow = d3.scaleQuantize().domain([0, 1]).range([0, 0.5, 1]);
 
 
 // Initialize the map
@@ -134,9 +134,10 @@ map.on('load', async () => {
             } else {
               selectedTime.textContent = formatTime(timeFilter); // Display formatted time
               anyTimeLabel.style.display = 'none'; // Hide "(any time)"
+              
             }
             
-            // Call updateScatterPlot to reflect the changes on the map
+            // Trigger filtering logic which will be implemented in the next step
             updateScatterPlot(timeFilter);
         }
 
@@ -145,15 +146,18 @@ map.on('load', async () => {
 
             timeFilter === -1 ? radiusScale.range([0, 25]) : radiusScale.range([3, 50]);
 
-            // Update the scatterplot by adjusting the radius of circles
+            // Update the scatterplot by adjusting the radius of circles and the tooltips info
             circles
-                .data(filteredStations, (d) => d.short_name)  // Ensure D3 tracks elements correctly
-                .join('circle')
-                .attr('r', (d) => radiusScale(d.totalTraffic))
-                .style('--departure-ratio', (d) =>
-                    stationFlow(d.departures / d.totalTraffic),
-                );
+            .data(filteredStations, (d) => d.short_name)  // Ensure D3 tracks elements correctly
+            .join('circle')
+            .attr('r', (d) => radiusScale(d.totalTraffic))
+            .style('--departure-ratio', (d) =>
+            stationFlow(d.departures / d.totalTraffic)
+        )
+            .select('title')  // Select the title element inside each circle
+            .text((d) => `${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
         }
+        
 
         timeSlider.addEventListener('input', updateTimeDisplay);
         updateTimeDisplay();
