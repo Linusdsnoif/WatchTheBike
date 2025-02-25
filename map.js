@@ -67,9 +67,9 @@ map.on('load', async () => {
             trip.started_at = new Date(trip.started_at);
             trip.ended_at = new Date(trip.ended_at);
             let startedMinutes = minutesSinceMidnight(trip.started_at); 
-            //This function returns how many minutes have passed since `00:00` (midnight).
+            //Returns how many minutes have passed since `00:00` (midnight).
             departuresByMinute[startedMinutes].push(trip); 
-            //This adds the trip to the correct index in `departuresByMinute` so that later we can efficiently retrieve all trips that started at a specific time.
+            //Adds the trip to the correct index in `departuresByMinute` 
 
             // TODO: Same for arrivals
             let endedMinutes = minutesSinceMidnight(trip.ended_at); 
@@ -89,11 +89,11 @@ map.on('load', async () => {
 
         const circles = svg
             .selectAll('circle')
-            .data(stations, (d) => d.short_name)  // Use station short_name as the key
+            .data(stations, (d) => d.short_name)  // Use short_name as the key
             .enter()
             .append('circle')
             .each(function(d) {
-                // Add <title> for browser tooltips
+                // tooltips title
                 d3.select(this)
                   .append('title')
                   .text(`${d.totalTraffic} trips (${d.departures} departures, ${d.arrivals} arrivals)`);
